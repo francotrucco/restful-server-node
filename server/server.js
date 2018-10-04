@@ -1,6 +1,10 @@
-const express = require('express');
-const bodyParser = require('body-parser');
 require('./config/config');
+
+const express = require('express');
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+const colors = require('colors');
+
 const app = express();
 
 // parse application/x-www-form-urlenconded
@@ -10,57 +14,13 @@ app.use(bodyParser.urlencoded({
 // parse application/json
 app.use(bodyParser.json());
 
-app.get('/users', (req, res) => {
+app.use(require('./routes/users'));
 
-    let users = [{
-        "username": "ftrucco",
-        "name": "Franco Trucco",
-        "age": 23
-    }, {
-        "username": "nburdisso",
-        "name": "Nahuel Burdisso",
-        "age": 22
-    }];
+mongoose.connect(process.env.urlDb, (err, res) => {
+    
+    if (err) throw err;
 
-    res.json(users);
-});
-
-app.get('/users/:id', (req, res) => {
-    let id = req.params.id;
-
-    let user = {
-        id,
-        "username": "ftrucco",
-        "name": "Franco Trucco",
-        "age": 23
-    }
-
-    res.json(user)
-});
-
-app.post('/users', (req, res) => {
-    let body = req.body;
-
-    if (body.name === undefined) {
-        res.status(400).json({
-            ok: false,
-            message: 'The name is required'
-        });
-    } else {
-        res.status(201).json({
-            body
-        });
-    }
-});
-
-app.put('/users', (req, res) => {
-    let body = req.body;
-
-
-});
-
-app.delete('/users', (req, res) => {
-
+    console.log('ONLINE Database'.green);
 });
 
 app.listen(process.env.PORT, () => {
